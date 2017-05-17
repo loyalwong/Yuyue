@@ -28,7 +28,7 @@ def login():
             print("click login button")
             sleep(5)
             if b.is_element_present_by_value(u'注销退出'):
-                print("already logined")
+                print("already logined !")
                 break
     except Exception:
         print("error occur")
