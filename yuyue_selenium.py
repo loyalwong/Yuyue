@@ -8,10 +8,9 @@ from selenium.common.exceptions import NoSuchElementException
 base_url = "http://yuyue.shdc.org.cn/"
 loginuserName = "15921615178"
 loginuserPassword = "87994566"
-#doctorname = u"王琛"
-doctorname = u"彭华"
-appointment_weekday = u'星期四'
-appointment_date = u''
+doctorname = u"赵琳"
+appointment_weekday = u'星期三'
+appointment_date = u'05-24'
 
 driver = webdriver.Chrome()
 driver.implicitly_wait(30)
@@ -32,7 +31,6 @@ driver.find_element_by_xpath(u"//input[@value='登录']").click()
 driver.find_element_by_link_text(u"个人中心").click()
 driver.find_element_by_link_text(u"医生关注").click()
 driver.find_element_by_link_text(doctorname).click()
-#elem1 = driver.find_elements_by_class_name("lan")
 element1 = driver.find_elements_by_name("schedule")
 for element2 in element1:
     schedule_date = element2.text.split('\n')[0]
@@ -44,10 +42,9 @@ for element2 in element1:
         element_appointment = element2
         break
 element_appointment.click()
-element3 = driver.find_element_by_class_name('selecttime')
-for element4 in element3:
-    for element5 in element4:
-        break
+element3 = driver.find_elements_by_class_name('selecttime')
+element4 = driver.find_elements_by_tag_name('label')
+element5 = driver.find_elements_by_name('orderTimeXY1')
 
 driver.find_element_by_link_text(u"下一步").click()
 driver.find_element_by_id(u"王忠").click()
