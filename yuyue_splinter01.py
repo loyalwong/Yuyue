@@ -11,112 +11,61 @@ loginuserPassword = "87994566"
 doctorname = u"赵琳"
 hospitalname = u"医院：新华医院"
 appointment_weekday = u'星期三'
-appointment_date = u'05-24'
-appointment_time = u'05-24'
+appointment_date = u'06-07'
+appointment_time = u'2017-06-07 09:00-10:00'
 
 def login():
     try:
-        while b.is_element_present_by_value(u'登录'):
-            print("in the start of loop of login")
-            sleep(5)
-            b.find_link_by_text(u"登录").click()
-            b.fill('orderwebUser.userName',loginuserName)
-            b.fill('loginuserPassword',loginuserPassword)
-            b.fill('logincertCode', loginuserPassword)
-            sleep(10)
-            b.find_by_value(u'登录').click()
-            print("click login button")
-            sleep(5)
-            if b.is_element_present_by_value(u'注销退出'):
-                print("already logined !")
+        while browser.find_link_by_text(u"登录"):
+            browser.find_link_by_text(u"登录").click()
+            browser.fill('orderwebUser.userName',loginuserName)
+            browser.fill('loginuserPassword',loginuserPassword)
+            browser.fill('logincertCode', loginuserPassword)
+            browser.find_by_value(u'登录').click()
+            if browser.is_element_present_by_value(u'注销'):
                 break
     except Exception:
         print("error occur")
 
 def expert_choose():
-    doctor_flag = False
-    hospital_flag = False
-    try:
-        b.click_link_by_text(u'我的专家')
-
-        element1 = b.find_by_id('ctl00_ContentPlaceHolder1_divdoctorlist')
-        element2 = element1.find_by_css('div.content_doctor') + element1.find_by_css('div.content_doctor_even')
-        for each2 in element2:
-            element3 = each2.find_by_css('div.content_doctor_action')
-            element4 = each2.find_by_css('div.content_doctor_detail')
-            element5 = element4.find_by_css('div.content_doctor_detail_top')
-            element6 = element5.find_by_tag('p')
-            for each6 in element6:
-                if each6.text == doctorname:
-                    doctor_flag = True
-                if each6.text == hospitalname:
-                    hospital_flag = True
-            if doctor_flag == True and hospital_flag == True:
-                element7 = element3.find_by_css('div.content_doctor_action_bottom')
+    if browser.find_link_by_partial_text(u"个人中心") != []:
+        browser.click_link_by_partial_text(u"个人中心")
+    element1 = browser.find_link_by_partial_text(u"医生关注")
+    if element1 != []:
+        for element2 in element1:
+            if element2.visible:
+                element2.click()
                 break
+    if browser.find_link_by_partial_text(doctorname) != []:
+        browser.click_link_by_partial_text(doctorname)
 
-        button_appointment = element7.find_by_value(u'预约')
-        button_appointment.click()
-
-    except Exception:
-        print("error occur")
 
 def date_choose():
-    dict_date = {}
-
-    while dict_date == {}:
-        try:
-            element1 = b.find_by_id('divorder_content')
-            element2 = element1.find_by_css('div.order_date_date')
-            for each2 in element2:
-                element3 = each2.find_by_tag('ul')
-                element4 = element3.find_by_tag('li')
-                for each4 in element4:
-                    element5 = each4.find_by_tag('span')
-                    date = element5.value[element5.value.find(u'月')-2:element5.value.find(u'星期')+3]
-                    element6 = each4.find_by_tag('img')
-                    for each6 in element6:
-                        if each6.outer_html.find('onclick') != -1:
-                            dict_date.setdefault(date,each6)
-        except Exception:
-            print("error occurs")
-        if dict_date != {}:
+    element1 = browser.find_by_name("schedule")
+    for element2 in element1:
+        schedule_date = element2.text.split('\n')[0]
+        schedule_weekday = element2.text.split('\n')[1]
+        if (schedule_weekday == appointment_weekday and appointment_weekday != u'' and \
+                        schedule_date == appointment_date and appointment_date != u'') or \
+                (schedule_weekday == appointment_weekday and appointment_weekday != u'' and appointment_date == u'') or \
+                (schedule_date == appointment_date and appointment_date != u'' and appointment_weekday == u''):
+            element3 = element2
             break
-        else:
-            b.reload()
+    element3.click()
 
-    try:
-        button_order = dict_date.get(date_determine(dict_date.keys()),0)
-        button_order.click()
-    except Exception:
-        print("error occurs")
 
 def time_choose():
-    dict_time = {}
-    order_time = ''
-    order_button = []
-    try:
-        element1 = b.find_by_id('divorder_content')
-        element2 = element1.find_by_css('div.order_time_list')
-        element3 = element2.find_by_tag('ul')
-        element4 = element3.find_by_tag('li')
-        for each4 in element4:
-            if each4.outer_html.find('order_time_list_content_time')!= -1:
-                order_time = each4.text
-            if each4.outer_html.find('onclick')!= -1:
-                order_button = each4
-            if order_time != '' and order_button != []:
-                dict_time.setdefault(order_time,order_button)
-                order_time = ''
-                order_button = []
-    except Exception:
-        print("error occurs")
+    element1 = browser.find_by_id('confirm_Number')
+    element2 = element1.first.find_by_css('ul.selecttime')
+    element3 = element2.first.find_by_tag('li')
+    for element4 in element3:
+        if element4.find_by_tag('label').first.text == appointment_time:
+            element5 = element4.find_by_tag('input').first
+            break
+    element5.click()
+    if browser.find_link_by_partial_text(u"下一步") != []:
+        browser.click_link_by_partial_text(u"下一步")
 
-    try:
-        button_order = dict_time.get(time_determine(dict_time.keys()),0)
-        button_order.click()
-    except Exception:
-        print("error occurs")
 
 def date_determine(date):
     if len(date) == 1:
@@ -135,24 +84,17 @@ def time_determine(time):
                 return each
 
 def reservation_confirm():
-    b.fill('txtVerifyCode','')
-    sleep(15)
-    element1 = b.find_by_css('div.doctor_qryy_confirm')
-    button = element1.find_by_tag('img')
-    button.click()
-    element2 = b.find_by_css('div.doctor_yycg_ok')
-    element3 = element2.find_by_tag('img')
-    for each3 in element3:
-        if each3.outer_html.find('AgreeNotice')!= -1:
-            button_confirm = each3
+    browser.fill('certCode', loginuserPassword)
+    browser.find_by_name(u"获取短信验证码").first.click()
 
-    button_confirm.click()
+    if browser.find_link_by_partial_text(u"提交") != []:
+        browser.click_link_by_partial_text(u"提交")
 
 
 def yuyue():
-    global b
-    b = Browser(driver_name="chrome")
-    b.visit(base_url)
+    global browser
+    browser = Browser(driver_name="chrome")
+    browser.visit(base_url)
     login()
     expert_choose()
     date_choose()
@@ -160,7 +102,7 @@ def yuyue():
     reservation_confirm()
 
     sleep(30)
-    b.quit()
+    browser.quit()
 
 if __name__ == "__main__":
     yuyue()
