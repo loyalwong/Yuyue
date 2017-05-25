@@ -2,30 +2,32 @@
 from splinter.browser import Browser
 from time import sleep
 
-#网址
+# 网址
 base_url = "http://yuyue.shdc.org.cn/"
-#用户名，密码
+# 用户名，密码
 loginuserName = "15921615178"
 loginuserPassword = "87994566"
-#医生
-doctorname = u"赵琳"
+# 医生
+doctorname = u"彭华"
 hospitalname = u"医院：新华医院"
-appointment_weekday = u'星期三'
-appointment_date = u'06-07'
+appointment_weekday = u'星期四'
+appointment_date = u'06-08'
 appointment_time = u'2017-06-07 09:00-10:00'
+
 
 def login():
     try:
         while browser.find_link_by_text(u"登录"):
             browser.find_link_by_text(u"登录").click()
-            browser.fill('orderwebUser.userName',loginuserName)
-            browser.fill('loginuserPassword',loginuserPassword)
+            browser.fill('orderwebUser.userName', loginuserName)
+            browser.fill('loginuserPassword', loginuserPassword)
             browser.fill('logincertCode', loginuserPassword)
             browser.find_by_value(u'登录').click()
             if browser.is_element_present_by_value(u'注销'):
                 break
     except Exception:
         print("error occur")
+
 
 def expert_choose():
     if browser.find_link_by_partial_text(u"个人中心") != []:
@@ -42,16 +44,28 @@ def expert_choose():
 
 def date_choose():
     element1 = browser.find_by_name("schedule")
+    date_available = []
+    date_chosen = ''
     for element2 in element1:
-        schedule_date = element2.text.split('\n')[0]
-        schedule_weekday = element2.text.split('\n')[1]
+        date_available.append(element2.text)
+    date_determine(date_available,date_chosen)
+    for element2 in element1:
+        if element2.text == date_chosen:
+            element3 = element2
+            break
+    element3.click()
+
+
+def date_determine(date_available,date_chosen):
+    for each1 in date_available:
+        schedule_date = each1.text.split('\n')[0]
+        schedule_weekday = each1.text.split('\n')[1]
         if (schedule_weekday == appointment_weekday and appointment_weekday != u'' and \
                         schedule_date == appointment_date and appointment_date != u'') or \
                 (schedule_weekday == appointment_weekday and appointment_weekday != u'' and appointment_date == u'') or \
                 (schedule_date == appointment_date and appointment_date != u'' and appointment_weekday == u''):
-            element3 = element2
+            element3 = each1
             break
-    element3.click()
 
 
 def time_choose():
@@ -67,13 +81,6 @@ def time_choose():
         browser.click_link_by_partial_text(u"下一步")
 
 
-def date_determine(date):
-    if len(date) == 1:
-        return date
-    else:
-        for each in date:
-            if each == appointment_date:
-                return each
 
 def time_determine(time):
     if len(time) == 1:
@@ -82,6 +89,7 @@ def time_determine(time):
         for each in time:
             if each == appointment_time:
                 return each
+
 
 def reservation_confirm():
     browser.fill('certCode', loginuserPassword)
@@ -103,6 +111,7 @@ def yuyue():
 
     sleep(30)
     browser.quit()
+
 
 if __name__ == "__main__":
     yuyue()
