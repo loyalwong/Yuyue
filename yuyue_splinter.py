@@ -149,7 +149,7 @@ def yuyue():
             if date_choose():
                 if time_choose():
                     reservation_confirm()
-                    sleep(60*random.random())
+                    sleep(60*random())
     browser.quit()
 
 
