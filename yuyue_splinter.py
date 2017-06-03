@@ -1,6 +1,9 @@
 # coding=utf-8
 from splinter.browser import Browser
 from time import sleep
+from random import random
+import urllib.request
+
 
 # 网址
 base_url = "http://yuyue.shdc.org.cn/"
@@ -23,6 +26,8 @@ def login():
             browser.fill('orderwebUser.userName', loginuserName)
             browser.fill('loginuserPassword', loginuserPassword)
             browser.fill('logincertCode', loginuserPassword)
+            urllib.request.urlretrieve("http://yuyue.shdc.org.cn/verifycode.xujie?id=%27+%20Math.random()",
+                                       "local-filename.jpg")
             browser.find_by_value(u'登录').click()
             if browser.is_element_present_by_text(u'注销'):
                 loginned = 1
@@ -144,7 +149,8 @@ def yuyue():
             if date_choose():
                 if time_choose():
                     reservation_confirm()
-                    sleep(30)
+                    seconds_sleep = 60*random.random()
+                    sleep(seconds_sleep)
     browser.quit()
 
 
