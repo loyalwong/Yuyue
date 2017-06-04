@@ -5,20 +5,36 @@ from random import random
 import urllib.request
 
 
-# 网址
-base_url = "http://yuyue.shdc.org.cn/"
-# 用户名，密码
-loginuserName = "15921615178"
-loginuserPassword = "87994566"
-# 医生
-doctorname = u"赵琳"
-hospitalname = u"医院：新华医院"
-appointment_weekday = u'星期三'
-appointment_date = u'06-08'
-appointment_time = u'2017-06-07 09:00-10:00'
+global base_url,loginuserName,loginuserPassword,doctorname,hospitalname,appointment_weekday,appointment_date,appointment_time
+
+def read_config():
+    config_file = open('yuyue_config', mode='r', encoding='utf-8')
+    for each in config_file:
+        if each[0] == '#':
+            continue
+        else:
+            param = each.split(' = ')[0]
+            value = each.split(' = ')[1]
+            if param == 'base_url':
+                base_url = value
+            elif param == 'loginuserName':
+                loginuserName = value
+            elif param == 'loginuserPassword':
+                loginuserPassword = value
+            elif param == 'doctorname':
+                doctorname = value
+            elif param == 'hospitalname':
+                hospitalname = value
+            elif param == 'appointment_weekday':
+                appointment_weekday = value
+            elif param == 'appointment_date':
+                appointment_date = value
+            elif param == 'appointment_time':
+                appointment_time = value
 
 
 def login():
+    read_config()
     try:
         if browser.find_link_by_text(u"登录"):
             loginned = 0
