@@ -4,17 +4,17 @@ from time import sleep
 from random import random
 import urllib.request
 
-
-global base_url,loginuserName,loginuserPassword,doctorname,hospitalname,appointment_weekday,appointment_date,appointment_time
+# 网址
+base_url = "http://yuyue.shdc.org.cn/"
 
 def read_config():
     config_file = open('yuyue_config', mode='r', encoding='utf-8')
     for each in config_file:
-        if each[0] == '#':
+        if each[0] == '#' or each == '\n':
             continue
         else:
-            param = each.split(' = ')[0]
-            value = each.split(' = ')[1]
+            param = each.split('=')[0].strip()
+            value = each.split('=')[1].lstrip().rstrip('\n')
             if param == 'base_url':
                 base_url = value
             elif param == 'loginuserName':
@@ -34,7 +34,6 @@ def read_config():
 
 
 def login():
-    read_config()
     try:
         if browser.find_link_by_text(u"登录"):
             loginned = 0
@@ -158,9 +157,12 @@ def reservation_confirm():
 
 def yuyue():
     global browser
+    global loginuserName,loginuserPassword, doctorname, hospitalname, appointment_weekday, appointment_date, appointment_time
     browser = Browser(driver_name="chrome")
+    read_config()
     browser.visit(base_url)
     while login():
+        read_config()
         if expert_choose():
             if date_choose():
                 if time_choose():
