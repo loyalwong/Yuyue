@@ -8,6 +8,7 @@ import urllib.request
 base_url = "http://yuyue.shdc.org.cn/"
 
 def read_config():
+    global loginuserName,loginuserPassword, doctorname, hospitalname, appointment_weekday, appointment_date, appointment_time
     config_file = open('yuyue_config', mode='r', encoding='utf-8')
     for each in config_file:
         if each[0] == '#' or each == '\n':
@@ -32,6 +33,16 @@ def read_config():
             elif param == 'appointment_time':
                 appointment_time = value
 
+def parsecertcode():
+    logincertCode = ''
+    browser.execute_script('''window.open("about:blank","blank");''')
+    browser.windows.current = browser.windows[1]
+    browser.visit("chrome://view-http-cache/")
+    element1 = browser.find_link_by_partial_text('http://yuyue.shdc.org.cn/verifycode.xujie')
+    for element2 in element1:
+        logincertCode = ''
+    browser.windows.current.close()
+    return logincertCode
 
 def login():
     try:
@@ -40,9 +51,8 @@ def login():
             browser.find_link_by_text(u"登录").click()
             browser.fill('orderwebUser.userName', loginuserName)
             browser.fill('loginuserPassword', loginuserPassword)
-            browser.fill('logincertCode', loginuserPassword)
-            urllib.request.urlretrieve("http://yuyue.shdc.org.cn/verifycode.xujie?id=%27+%20Math.random()",
-                                       "local-filename.jpg")
+            logincertCode = parsecertcode()
+            browser.fill('logincertCode', logincertCode)
             browser.find_by_value(u'登录').click()
             if browser.is_element_present_by_text(u'注销'):
                 loginned = 1
@@ -157,7 +167,6 @@ def reservation_confirm():
 
 def yuyue():
     global browser
-    global loginuserName,loginuserPassword, doctorname, hospitalname, appointment_weekday, appointment_date, appointment_time
     browser = Browser(driver_name="chrome")
     read_config()
     browser.visit(base_url)
