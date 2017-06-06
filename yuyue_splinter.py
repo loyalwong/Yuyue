@@ -3,6 +3,7 @@ from splinter.browser import Browser
 from time import sleep
 from random import random
 import urllib.request
+import binascii
 
 # 网址
 base_url = "http://yuyue.shdc.org.cn/"
@@ -33,15 +34,24 @@ def read_config():
             elif param == 'appointment_time':
                 appointment_time = value
 
-def parsecertcode():
+def certcode_get():
     logincertCode = ''
     browser.execute_script('''window.open("about:blank","blank");''')
     browser.windows.current = browser.windows[1]
     browser.visit("chrome://view-http-cache/")
-    element1 = browser.find_link_by_partial_text('http://yuyue.shdc.org.cn/verifycode.xujie')
-    for element2 in element1:
-        logincertCode = ''
+    browser.find_link_by_partial_text('http://yuyue.shdc.org.cn/verifycode.xujie').first.click()
+    file_cache = browser.html
     browser.windows.current.close()
+    file_cache1 = file_cache[file_cache.rfind('00000000:'):file_cache.find('</pre><hr /><pre></pre><table>')].split('\n')
+    file_cache2 = ''
+    for line in file_cache1:
+        file_cache2 = file_cache2 + line[9:57]
+    file_cache3 = file_cache2.replace(' ','')
+    file_cache4 = binascii.unhexlify(file_cache3)
+    fout = open('test.jpg', 'wb')
+    fout.write(file_cache4)
+    fout.close
+    logincertCode = ''
     return logincertCode
 
 def login():
@@ -51,7 +61,7 @@ def login():
             browser.find_link_by_text(u"登录").click()
             browser.fill('orderwebUser.userName', loginuserName)
             browser.fill('loginuserPassword', loginuserPassword)
-            logincertCode = parsecertcode()
+            logincertCode = certcode_get()
             browser.fill('logincertCode', logincertCode)
             browser.find_by_value(u'登录').click()
             if browser.is_element_present_by_text(u'注销'):
