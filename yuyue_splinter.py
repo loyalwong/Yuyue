@@ -4,6 +4,7 @@ from time import sleep
 from random import random
 import urllib.request
 import binascii
+from PIL import Image
 
 # 网址
 base_url = "http://yuyue.shdc.org.cn/"
@@ -34,8 +35,20 @@ def read_config():
             elif param == 'appointment_time':
                 appointment_time = value
 
-def certcode_get():
+def logincertcode_get():
+    image = logincertcode_image_get()
+    image_test(image)
+
     logincertCode = ''
+    return logincertCode
+
+def image_test(image):
+    fout = open('test.jpg', 'wb')
+    fout.write(image)
+    fout.close()
+
+
+def logincertcode_image_get():
     browser.execute_script('''window.open("about:blank","blank");''')
     browser.windows.current = browser.windows[1]
     browser.visit("chrome://view-http-cache/")
@@ -45,14 +58,9 @@ def certcode_get():
     file_cache1 = file_cache[file_cache.rfind('00000000:'):file_cache.find('</pre><hr /><pre></pre><table>')].split('\n')
     file_cache2 = ''
     for line in file_cache1:
-        file_cache2 = file_cache2 + line[9:57]
-    file_cache3 = file_cache2.replace(' ','')
-    file_cache4 = binascii.unhexlify(file_cache3)
-    fout = open('test.jpg', 'wb')
-    fout.write(file_cache4)
-    fout.close
-    logincertCode = ''
-    return logincertCode
+        file_cache2 = file_cache2 + line[9:57].replace(' ','')
+    file_cache3 = binascii.unhexlify(file_cache2)
+    return file_cache3
 
 def login():
     try:
@@ -61,7 +69,7 @@ def login():
             browser.find_link_by_text(u"登录").click()
             browser.fill('orderwebUser.userName', loginuserName)
             browser.fill('loginuserPassword', loginuserPassword)
-            logincertCode = certcode_get()
+            logincertCode = logincertcode_get()
             browser.fill('logincertCode', logincertCode)
             browser.find_by_value(u'登录').click()
             if browser.is_element_present_by_text(u'注销'):
