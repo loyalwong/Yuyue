@@ -5,7 +5,7 @@ from random import random
 import urllib.request
 import binascii
 from PIL import Image
-#import StringIO
+
 
 # 网址
 base_url = "http://yuyue.shdc.org.cn/"
