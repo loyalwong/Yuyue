@@ -5,6 +5,7 @@ from random import random
 import urllib.request
 import binascii
 from PIL import Image
+#import StringIO
 
 # 网址
 base_url = "http://yuyue.shdc.org.cn/"
@@ -36,14 +37,17 @@ def read_config():
                 appointment_time = value
 
 def logincertcode_get():
-    image = logincertcode_image_get()
-    image_test(image)
+    certcode_image = logincertcode_image_get()
+    image_save(certcode_image,'temp.jpg')
+    im = Image.open('temp.jpg')
+    imgry = im.convert('L')
+    imgry.show()
 
     logincertCode = ''
     return logincertCode
 
-def image_test(image):
-    fout = open('test.jpg', 'wb')
+def image_save(image,filename):
+    fout = open(filename, 'wb')
     fout.write(image)
     fout.close()
 
