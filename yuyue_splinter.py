@@ -46,6 +46,7 @@ def logincertcode_get():
     logincertCode = ''
     return logincertCode
 
+
 def image_save(image,filename):
     fout = open(filename, 'wb')
     fout.write(image)
@@ -65,6 +66,7 @@ def logincertcode_image_get():
         file_cache2 = file_cache2 + line[9:57].replace(' ','')
     file_cache3 = binascii.unhexlify(file_cache2)
     return file_cache3
+
 
 def login():
     try:
