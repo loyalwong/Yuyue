@@ -38,8 +38,8 @@ def read_config():
 
 def logincertcode_get():
     certcode_image = logincertcode_image_get()
-    image_save(certcode_image,'temp.jpg')
-    im = Image.open('temp.jpg')
+    logincertcode_image_save(certcode_image,'verifycode.jpg')
+    im = Image.open('verifycode.jpg')
     imgry = im.convert('L')
     imgry.show()
 
@@ -47,7 +47,7 @@ def logincertcode_get():
     return logincertCode
 
 
-def image_save(image,filename):
+def logincertcode_image_save(image,filename):
     fout = open(filename, 'wb')
     fout.write(image)
     fout.close()
