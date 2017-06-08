@@ -2,7 +2,6 @@
 from splinter.browser import Browser
 from time import sleep
 from random import random
-import urllib.request
 import binascii
 from PIL import Image
 
