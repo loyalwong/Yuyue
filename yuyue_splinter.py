@@ -11,7 +11,7 @@ base_url = "http://yuyue.shdc.org.cn/"
 
 def read_config():
     global loginuserName,loginuserPassword, doctorname, hospitalname, appointment_weekday, appointment_date, appointment_time
-    config_file = open('yuyue_config', mode='r', encoding='utf-8')
+    config_file = open('yuyue.cfg', mode='r', encoding='utf-8')
     for each in config_file:
         if each[0] == '#' or each == '\n':
             continue
