@@ -38,10 +38,6 @@ def read_config():
 def logincertcode_get():
     certcode_image = logincertcode_image_get()
     logincertcode_image_save(certcode_image,'verifycode.jpg')
-    im = Image.open('verifycode.jpg')
-    imgry = im.convert('L')
-    imgry.show()
-
     logincertCode = ''
     return logincertCode
 
@@ -74,7 +70,8 @@ def login():
             browser.find_link_by_text(u"登录").click()
             browser.fill('orderwebUser.userName', loginuserName)
             browser.fill('loginuserPassword', loginuserPassword)
-            logincertCode = logincertcode_get()
+#            logincertCode = logincertcode_get()
+            logincertCode = loginuserPassword
             browser.fill('logincertCode', logincertCode)
             browser.find_by_value(u'登录').click()
             if browser.is_element_present_by_text(u'注销'):
@@ -99,8 +96,14 @@ def expert_choose():
             if element2.visible:
                 element2.click()
                 break
-    if browser.find_link_by_partial_text(doctorname) != []:
-        browser.click_link_by_partial_text(doctorname)
+    element3 = browser.find_by_css('dl.docinfo')
+    for element4 in element3:
+        element5 = element4.find_by_xpath('dd').first.find_by_xpath('p').first
+        if doctorname in element5.text:
+            element6 = element5.find_by_xpath('a').first
+            break
+    if element6 != []:
+        element6.click()
         return True
     else:
         return False
@@ -112,7 +115,7 @@ def date_choose():
     date_chosen = ''
     for element2 in element1:
         date_available.append(element2.text)
-    date_chosen = date_determine(date_available,1)
+    date_chosen = date_determine(date_available)
     element3 = False
     for element2 in element1:
         if element2.text == date_chosen:
@@ -125,7 +128,7 @@ def date_choose():
         return False
 
 
-def date_determine(date_available,mode=1):
+def date_determine(date_available,mode=2):
     date_chosen = ''
     if mode == 1:  #accroding setting date & weekday
         for each1 in date_available:
@@ -138,7 +141,14 @@ def date_determine(date_available,mode=1):
                  date_chosen = each1
                  break
     elif mode == 2:  # according to available earliest date
-        date_chosen = ''
+        date_cmp = []
+        for each1 in date_available:
+            date_cmp.append(each1.split('\n')[0])
+        date_cmp_chosen = sorted(date_cmp, reverse=False)[0]
+        for each1 in date_available:
+            date_cmp_chosen == each1.split('\n')[0]
+            date_chosen = each1
+            break
     else:
         date_chosen = ''
     return date_chosen
@@ -152,7 +162,7 @@ def time_choose():
     time_chosen = ''
     for element4 in element3:
         time_available.append(element4.find_by_tag('label').first.text)
-    time_chosen = time_determine(time_available,2)
+    time_chosen = time_determine(time_available)
     for element4 in element3:
         if element4.find_by_tag('label').first.text == time_chosen:
             element5 = element4.find_by_tag('input').first
@@ -166,7 +176,7 @@ def time_choose():
         return False
 
 
-def time_determine(time_available,mode = 1):
+def time_determine(time_available,mode = 2):
     if mode == 1:  #accroding setting date & weekday
         time_chosen = appointment_time
     elif mode == 2:  # according to available earliest time
