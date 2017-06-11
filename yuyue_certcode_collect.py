@@ -1,6 +1,5 @@
 # coding=utf-8
 import urllib.request
-import exception
 import datetime
 import time
 import random
