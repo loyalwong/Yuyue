@@ -36,19 +36,19 @@ def read_config():
                 appointment_time = value
 
 def logincertcode_get():
-    certcode_image = logincertcode_image_get()
-    logincertcode_image_save(certcode_image,'verifycode.jpg')
+    certcode_image = logincertcode_image_from_cache()
+    logincertcode_image_file_save(certcode_image,'verifycode.jpg')
     logincertCode = ''
     return logincertCode
 
 
-def logincertcode_image_save(image,filename):
+def logincertcode_image_file_save(image,filename):
     fout = open(filename, 'wb')
     fout.write(image)
     fout.close()
 
 
-def logincertcode_image_get():
+def logincertcode_image_from_cache():
     browser.execute_script('''window.open("about:blank","blank");''')
     browser.windows.current = browser.windows[1]
     browser.visit("chrome://view-http-cache/")
