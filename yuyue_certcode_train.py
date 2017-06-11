@@ -6,17 +6,20 @@ from time import sleep
 from random import random
 import binascii
 
-def trainning_data_get():
-    im = Image.open('verifycode.jpg')
-    imgry = im.convert('L')
-    box = (0, 0, 150, 20)
-    region = im.crop(box)
-    imgry.show()
+def trainning_single_image_data_get(filename):
+    im = Image.open(filename)
+    imgry = im.convert('1')
+    box = (50, 0, 100, 20)
+    region = imgry.crop(box)
     region.show()
-    print("trainning_data_get()")
+    region.save('result.jpg')
     x_train = []
     y_train = []
     return x_train,y_train
+
+def trainning_data_get():
+    x_train, y_train = trainning_single_image_data_get('verifycode.jpg')
+
 
 def tensorflow_train(x_train,y_train):
     x = tf.placeholder(tf.float32, [None, 784])
@@ -38,6 +41,7 @@ def tensorflow_train(x_train,y_train):
     print("trainning_data_get()")
 
 if __name__ == "__main__":
+    trainning_single_image_data_get('verifycode.jpg')
     x_train, y_train = trainning_data_get()
     tensorflow_train(x_train, y_train)
     print("finished")
