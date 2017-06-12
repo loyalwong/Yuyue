@@ -4,6 +4,7 @@ import tensorflow as tf
 from os import listdir
 from os.path import isfile, join
 import numpy as np
+import string
 from time import sleep
 from random import random
 import binascii
@@ -31,22 +32,34 @@ def trainning_data_get():
             if each_lable[0:18] == each_image:
                 if each_lable[22:23] != '':
                     x_train_char1 = trainning_single_image_data_get(join(mypath,each_image))
-                    y_train_char1 = each_lable[22:23]
+                    tmp1 = each_lable[22:23]
+                    if tmp1 == '1':
+                        y_train_char1 = [1,0,0,0,0,0]
+                    elif tmp1 == '2':
+                        y_train_char1 = [0,1,0,0,0,0]
+                    elif tmp1 == '3':
+                        y_train_char1 = [0,0,1,0,0,0]
+                    elif tmp1 == '4':
+                        y_train_char1 = [0,0,0,1,0,0]
+                    elif tmp1 == '5':
+                        y_train_char1 = [0,0,0,0,1,0]
+                    elif tmp1 == '6':
+                        y_train_char1 = [0,0,0,0,0,1]
                     x_train.append(x_train_char1)
                     y_train.append(y_train_char1)
     x_train_np = np.array(x_train)
-    y_train_np = np.transpose(np.array(y_train))
+    y_train_np = np.array(y_train)
     return x_train_np, y_train_np
 
 def tensorflow_train(x_train,y_train):
     # Create the model
     x = tf.placeholder(tf.float32, [None, 260])
-    W = tf.Variable(tf.zeros([260, 1]))
-    b = tf.Variable(tf.zeros([1]))
+    W = tf.Variable(tf.zeros([260, 6]))
+    b = tf.Variable(tf.zeros([6]))
     y = tf.matmul(x, W) + b
 
     # Define loss and optimizer
-    y_ = tf.placeholder(tf.float32, [None, 1])
+    y_ = tf.placeholder(tf.float32, [None, 6])
 
     # So here we use tf.nn.softmax_cross_entropy_with_logits on the raw
     # outputs of 'y', and then average across the batch.
