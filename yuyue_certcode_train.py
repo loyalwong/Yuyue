@@ -4,6 +4,7 @@ import tensorflow as tf
 from os import listdir
 from os.path import isfile, join
 import numpy as np
+import math
 import string
 from time import sleep
 from random import random
@@ -32,19 +33,9 @@ def trainning_data_get():
             if each_lable[0:18] == each_image:
                 if each_lable[22:23] != '':
                     x_train_char1 = trainning_single_image_data_get(join(mypath,each_image))
-                    tmp1 = each_lable[22:23]
-                    if tmp1 == '1':
-                        y_train_char1 = [1,0,0,0,0,0]
-                    elif tmp1 == '2':
-                        y_train_char1 = [0,1,0,0,0,0]
-                    elif tmp1 == '3':
-                        y_train_char1 = [0,0,1,0,0,0]
-                    elif tmp1 == '4':
-                        y_train_char1 = [0,0,0,1,0,0]
-                    elif tmp1 == '5':
-                        y_train_char1 = [0,0,0,0,1,0]
-                    elif tmp1 == '6':
-                        y_train_char1 = [0,0,0,0,0,1]
+                    list_tmp1 = sorted(list(bin(int(math.pow(2,int(each_lable[22:23])-1))))[2:],reverse=False)
+                    y_train_char1 =[int(list_tmp1[i]) for i in range(len(list_tmp1))]+[0 for _ in range(10-len(list_tmp1))]
+                    y_train_char1 = list_tmp1.append()
                     x_train.append(x_train_char1)
                     y_train.append(y_train_char1)
     x_train_np = np.array(x_train)
