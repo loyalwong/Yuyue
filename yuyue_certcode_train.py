@@ -33,9 +33,8 @@ def trainning_data_get():
             if each_lable[0:18] == each_image:
                 if each_lable[22:23] != '':
                     x_train_char1 = trainning_single_image_data_get(join(mypath,each_image))
-                    list_tmp1 = sorted(list(bin(int(math.pow(2,int(each_lable[22:23])-1))))[2:],reverse=False)
-                    y_train_char1 =[int(list_tmp1[i]) for i in range(len(list_tmp1))]+[0 for _ in range(10-len(list_tmp1))]
-                    y_train_char1 = list_tmp1.append()
+                    tmp1 = sorted(list(bin(int(math.pow(2,int(each_lable[22:23])-1))))[2:],reverse=False)
+                    y_train_char1 =[int(tmp1[i]) for i in range(len(tmp1))]+[0 for _ in range(10-len(tmp1))]
                     x_train.append(x_train_char1)
                     y_train.append(y_train_char1)
     x_train_np = np.array(x_train)
@@ -45,12 +44,12 @@ def trainning_data_get():
 def tensorflow_train(x_train,y_train):
     # Create the model
     x = tf.placeholder(tf.float32, [None, 260])
-    W = tf.Variable(tf.zeros([260, 6]))
-    b = tf.Variable(tf.zeros([6]))
+    W = tf.Variable(tf.zeros([260, 10]))
+    b = tf.Variable(tf.zeros([10]))
     y = tf.matmul(x, W) + b
 
     # Define loss and optimizer
-    y_ = tf.placeholder(tf.float32, [None, 6])
+    y_ = tf.placeholder(tf.float32, [None, 10])
 
     # So here we use tf.nn.softmax_cross_entropy_with_logits on the raw
     # outputs of 'y', and then average across the batch.
@@ -63,15 +62,13 @@ def tensorflow_train(x_train,y_train):
 
     # Train
     for _ in range(1000):
-        batch_xs, batch_ys = x_train,y_train
+        batch_xs, batch_ys = x_train[0:800],y_train[0:800]
         sess.run(train_step, feed_dict={x: batch_xs, y_: batch_ys})
 
     # Test trained model
     correct_prediction = tf.equal(tf.argmax(y, 1), tf.argmax(y_, 1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-    print(sess.run(accuracy, feed_dict={x: x_train,
-                                        y_: y_train}))
-    
+    print(sess.run(accuracy, feed_dict={x: x_train[801:1000],y_: y_train[801:1000]}))
     print("trainning_data_get()")
 
 if __name__ == "__main__":
