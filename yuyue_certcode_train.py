@@ -145,9 +145,9 @@ def main(_):
   with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
     for i in range(180):
-      batch_x = x_train[i]
-      batch_y = y_train[i]
-      if i % 100 == 0:
+      batch_x = x_train[i:i+10]
+      batch_y = y_train[i:i+10]
+      if i % 10 == 0:
         train_accuracy = accuracy.eval(feed_dict={
             x: batch_x, y_: batch_y, keep_prob: 1.0})
         print('step %d, training accuracy %g' % (i, train_accuracy))
