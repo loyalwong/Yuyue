@@ -125,7 +125,7 @@ def bias_variable(shape):
 
 def main(_):
   # Import data
-  x_train,y_train = trainning_data_get
+  x_train,y_train = trainning_data_get()
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 260])
