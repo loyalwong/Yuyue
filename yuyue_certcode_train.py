@@ -12,7 +12,7 @@ import sys
 def trainning_single_image_data_get(filename):
     im = Image.open(filename)
     imgry = im.convert('1')
-    box1 = (65, 0, 78, 20)
+    box1 = (62, 0, 82, 20)
     box2 = (87, 0, 100, 20)
     region1 = imgry.crop(box1)
     list_char1 = list(region1.getdata())
@@ -61,7 +61,7 @@ def deepnn(x):
   # Reshape to use within a convolutional neural net.
   # Last dimension is for "features" - there is only one here, since images are
   # grayscale -- it would be 3 for an RGB image, 4 for RGBA, etc.
-  x_image = tf.reshape(x, [-1, 28, 28, 1])
+  x_image = tf.reshape(x, [-1, 20, 20, 1])
 
   # First convolutional layer - maps one grayscale image to 32 feature maps.
   W_conv1 = weight_variable([5, 5, 1, 32])
@@ -128,7 +128,7 @@ def main(_):
   x_train,y_train = trainning_data_get()
 
   # Create the model
-  x = tf.placeholder(tf.float32, [None, 260])
+  x = tf.placeholder(tf.float32, [None, 400])
 
   # Define loss and optimizer
   y_ = tf.placeholder(tf.float32, [None, 10])
